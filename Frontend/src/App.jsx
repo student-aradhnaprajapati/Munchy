@@ -1,35 +1,22 @@
-import React, { useState } from "react";
-import { BrowserRouter } from "react-router-dom";
-import RoleRoutes from "./routes/RoleRoutes.jsx";
+import React, { useContext } from "react";
+import AppRoutes from "./routes.jsx";
+import { AuthContext } from "./context/AuthContext.jsx";
 import Sidebar from "./components/Sidebar.jsx";
 
-function App() {
-  const [userRole, setUserRole] = useState("student");
+const App = () => {
+  const { user } = useContext(AuthContext);
 
   return (
-    <BrowserRouter>
-      <div className="flex">
-        <Sidebar userRole={userRole} />
+    <div className="flex min-h-screen bg-gray-50">
+      {/* ✅ Sidebar only visible if user is logged in */}
+      {user && <Sidebar userRole={user.role} />}
 
-        <div className="flex-1 p-4">
-          <div className="mb-4">
-            <label className="mr-2 font-bold">Select Role:</label>
-            <select
-              value={userRole}
-              onChange={(e) => setUserRole(e.target.value)}
-              className="border p-1 rounded"
-            >
-              <option value="student">Student</option>
-              <option value="provider">Provider</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-
-          <RoleRoutes userRole={userRole} />
-        </div>
-      </div>
-    </BrowserRouter>
+      <main className="flex-1 p-6">
+        <AppRoutes />
+      </main>
+    </div>
   );
-}
+};
 
 export default App;
+

@@ -1,11 +1,33 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
-const User = sequelize.define("User", {
-  name: { type: DataTypes.STRING, allowNull: false },
-  email: { type: DataTypes.STRING, allowNull: false, unique: true },
-  password_hash: { type: DataTypes.STRING, allowNull: false },
-  phone: { type: DataTypes.STRING },
-});
+dotenv.config();
 
-module.exports = User;
+// ✅ Generate JWT token
+export const generateToken = (user) => {
+  try {
+    const token = jwt.sign(
+      {
+        id: user.id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" } // Token valid for 1 day
+    );
+    return token;
+  } catch (error) {
+    console.error("Error generating token:", error);
+    throw error;
+  }
+};
+
+// ✅ Verify JWT token
+export const verifyToken = (token) => {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return decoded;
+  } catch (error) {
+    console.error("Error verifying token:", error);
+    throw error;
+  }
+};

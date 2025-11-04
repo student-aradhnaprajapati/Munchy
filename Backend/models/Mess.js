@@ -1,12 +1,27 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
+import pool from "../config/db.js";
 
-const Mess = sequelize.define("Mess", {
-  name: { type: DataTypes.STRING, allowNull: false },
-  type: { type: DataTypes.STRING, allowNull: false },
-  address: { type: DataTypes.STRING, allowNull: false },
-  distance_km: { type: DataTypes.DECIMAL },
-  rating: { type: DataTypes.DECIMAL, defaultValue: 0 },
-});
+export const createMess = async ({ name, address, contact }) => {
+  const [result] = await pool.query(
+    `INSERT INTO mess (name, address, contact) VALUES (?, ?, ?)`,
+    [name, address, contact]
+  );
+  return result;
+};
 
-module.exports = Mess;
+export const getAllMess = async () => {
+  const [rows] = await pool.query(`SELECT * FROM mess`);
+  return rows;
+};
+
+export const getMessById = async (id) => {
+  const [rows] = await pool.query(`SELECT * FROM mess WHERE id = ?`, [id]);
+  return rows.length > 0 ? rows[0] : null;
+};
+
+export const updateMess = async (id, { name, address, contact }) => {
+  const [result] = await pool.query(
+    `UPDATE mess SET name = ?, address = ?, contact = ? WHERE id = ?`,
+    [name, address, contact, id]
+  );
+  return result;
+};
